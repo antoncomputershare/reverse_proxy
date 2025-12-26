@@ -77,7 +77,7 @@ async fn handle_request(
 
     // Create transaction record
     let transaction = Transaction {
-        id: state.stats.read().total_requests as usize,
+        id: state.next_transaction_id(),
         timestamp: Utc::now(),
         method: method.to_string(),
         path: format!("{}{}", path, query),

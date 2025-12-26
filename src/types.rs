@@ -2,6 +2,7 @@ use chrono::{DateTime, Utc};
 use parking_lot::RwLock;
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 /// Maximum number of requests to keep in history
 const MAX_HISTORY: usize = 1000;
@@ -34,6 +35,7 @@ pub struct ProxyStats {
 pub struct ProxyState {
     pub transactions: RwLock<VecDeque<Transaction>>,
     pub stats: RwLock<ProxyStats>,
+    next_id: AtomicU64,
 }
 
 impl ProxyState {
@@ -41,7 +43,12 @@ impl ProxyState {
         Self {
             transactions: RwLock::new(VecDeque::with_capacity(MAX_HISTORY)),
             stats: RwLock::new(ProxyStats::default()),
+            next_id: AtomicU64::new(1),
         }
+    }
+
+    pub fn next_transaction_id(&self) -> usize {
+        self.next_id.fetch_add(1, Ordering::SeqCst) as usize
     }
 
     pub fn add_transaction(&self, transaction: Transaction) {

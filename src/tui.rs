@@ -122,9 +122,6 @@ async fn run_app<B: ratatui::backend::Backend>(
         if app.should_quit {
             break;
         }
-
-        // Small delay to prevent CPU spinning
-        tokio::time::sleep(Duration::from_millis(10)).await;
     }
 
     Ok(())
