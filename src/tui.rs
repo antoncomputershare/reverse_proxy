@@ -191,10 +191,12 @@ fn render_header(f: &mut Frame, area: Rect) {
 }
 
 fn render_footer(f: &mut Frame, area: Rect) {
-    let footer = Paragraph::new("Press 'q' to quit | Tab/Shift+Tab to navigate | 1/2/3 for direct tab access")
-        .style(Style::default().fg(Color::Gray))
-        .alignment(Alignment::Center)
-        .block(Block::default().borders(Borders::ALL));
+    let footer = Paragraph::new(
+        "Press 'q' to quit | Tab/Shift+Tab to navigate | 1/2/3 for direct tab access",
+    )
+    .style(Style::default().fg(Color::Gray))
+    .alignment(Alignment::Center)
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(footer, area);
 }
 
@@ -203,10 +205,7 @@ fn render_overview(f: &mut Frame, app: &App, area: Rect) {
 
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(10),
-            Constraint::Min(0),
-        ])
+        .constraints([Constraint::Length(10), Constraint::Min(0)])
         .split(area);
 
     // Stats
@@ -275,18 +274,26 @@ fn render_overview(f: &mut Frame, app: &App, area: Rect) {
             Constraint::Length(10),
         ])
         .header(
-        Row::new(vec!["Time", "Method", "Path", "Status", "Duration"])
-            .style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
-            .bottom_margin(1),
-    )
-    .block(Block::default().borders(Borders::ALL).title("Recent Activity"));
+            Row::new(vec!["Time", "Method", "Path", "Status", "Duration"])
+                .style(
+                    Style::default()
+                        .fg(Color::Yellow)
+                        .add_modifier(Modifier::BOLD),
+                )
+                .bottom_margin(1),
+        )
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Recent Activity"),
+        );
 
     f.render_widget(table, chunks[1]);
 }
 
 fn render_requests(f: &mut Frame, app: &App, area: Rect) {
     let transactions = app.state.get_recent_transactions(100);
-    
+
     let rows: Vec<Row> = transactions
         .iter()
         .map(|t| {
@@ -319,11 +326,26 @@ fn render_requests(f: &mut Frame, app: &App, area: Rect) {
             Constraint::Length(10),
         ])
         .header(
-        Row::new(vec!["ID", "Timestamp", "Method", "Path", "Status", "Duration"])
-            .style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
+            Row::new(vec![
+                "ID",
+                "Timestamp",
+                "Method",
+                "Path",
+                "Status",
+                "Duration",
+            ])
+            .style(
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD),
+            )
             .bottom_margin(1),
-    )
-    .block(Block::default().borders(Borders::ALL).title("Request History"));
+        )
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Request History"),
+        );
 
     f.render_widget(table, area);
 }
@@ -331,9 +353,10 @@ fn render_requests(f: &mut Frame, app: &App, area: Rect) {
 fn render_help(f: &mut Frame, area: Rect) {
     let help_text = vec![
         Line::from(""),
-        Line::from(vec![
-            Span::styled("Charles - Reverse Proxy with TUI", Style::default().add_modifier(Modifier::BOLD)),
-        ]),
+        Line::from(vec![Span::styled(
+            "Charles - Reverse Proxy with TUI",
+            Style::default().add_modifier(Modifier::BOLD),
+        )]),
         Line::from(""),
         Line::from("Keyboard Shortcuts:"),
         Line::from(""),

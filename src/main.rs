@@ -6,7 +6,6 @@ use anyhow::Result;
 use clap::Parser;
 use std::sync::Arc;
 use tracing::{info, Level};
-use tracing_subscriber;
 
 #[derive(Parser, Debug)]
 #[command(name = "charles")]
@@ -60,10 +59,10 @@ async fn main() -> Result<()> {
     } else {
         // Start TUI
         let tui_result = tui::run_tui(state.clone()).await;
-        
+
         // TUI exited, shutdown proxy
         proxy_handle.abort();
-        
+
         tui_result?;
     }
 

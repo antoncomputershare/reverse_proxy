@@ -44,7 +44,11 @@ async fn handle_request(
     let start_time = Instant::now();
     let method = req.method().clone();
     let path = req.uri().path().to_string();
-    let query = req.uri().query().map(|q| format!("?{}", q)).unwrap_or_default();
+    let query = req
+        .uri()
+        .query()
+        .map(|q| format!("?{}", q))
+        .unwrap_or_default();
 
     // Update active connections
     state.update_stats(|stats| {
@@ -79,7 +83,7 @@ async fn handle_request(
         path: format!("{}{}", path, query),
         status: status.as_u16(),
         duration_ms: duration.as_millis() as u64,
-        request_size: 0, // Could be calculated from body
+        request_size: 0,  // Could be calculated from body
         response_size: 0, // Could be calculated from body
     };
 
@@ -109,14 +113,19 @@ async fn forward_request(req: &mut Request<Body>, target: &str) -> Result<Respon
     };
 
     // Build new URI with target host
-    let path_and_query = req.uri().path_and_query()
+    let path_and_query = req
+        .uri()
+        .path_and_query()
         .map(|pq| pq.as_str())
         .unwrap_or("/");
 
     let new_uri = format!(
         "{}://{}{}",
         target_uri.scheme_str().unwrap_or("http"),
-        target_uri.authority().map(|a| a.as_str()).unwrap_or("localhost"),
+        target_uri
+            .authority()
+            .map(|a| a.as_str())
+            .unwrap_or("localhost"),
         path_and_query
     )
     .parse::<Uri>()?;
@@ -134,7 +143,7 @@ async fn forward_request(req: &mut Request<Body>, target: &str) -> Result<Respon
                 .method(req.method())
                 .uri(req.uri())
                 .body(Body::empty())
-                .unwrap()
+                .unwrap(),
         )
         .await
         .context("Failed to send request to target")?;

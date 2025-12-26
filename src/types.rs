@@ -66,12 +66,7 @@ impl ProxyState {
 
     pub fn get_recent_transactions(&self, count: usize) -> Vec<Transaction> {
         let transactions = self.transactions.read();
-        transactions
-            .iter()
-            .rev()
-            .take(count)
-            .cloned()
-            .collect()
+        transactions.iter().rev().take(count).cloned().collect()
     }
 }
 
