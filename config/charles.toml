@@ -17,4 +17,4 @@ fail_threshold = 3
 cooldown_secs = 15
 
 [[routes.upstreams]]
-url = "http://httpbin.org:443"
+url = "https://httpbin.org"

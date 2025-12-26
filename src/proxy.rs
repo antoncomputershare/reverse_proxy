@@ -46,7 +46,7 @@ impl RouteMatcher {
         for pattern in patterns {
             if pattern.starts_with("*.") {
                 let suffix = &pattern[2..];
-                if host.ends_with(suffix) || host == &suffix[1..] {
+                if host.ends_with(suffix) || (suffix.len() > 1 && host == &suffix[1..]) {
                     return true;
                 }
             } else if pattern == host {
