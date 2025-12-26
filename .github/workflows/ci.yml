@@ -12,6 +12,8 @@ env:
 jobs:
   test:
     name: Test Suite
+    permissions:
+      contents: read
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -36,6 +38,8 @@ jobs:
 
   lint:
     name: Linting
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     
     steps:
@@ -57,6 +61,8 @@ jobs:
 
   build-release:
     name: Build Release
+    permissions:
+      contents: read
     strategy:
       matrix:
         include:

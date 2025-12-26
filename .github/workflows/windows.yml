@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     name: Build on Windows
+    permissions:
+      contents: read
     runs-on: windows-latest
     
     steps:
@@ -68,6 +70,8 @@ jobs:
 
   build-cross:
     name: Cross-compile for Windows ARM64
+    permissions:
+      contents: read
     runs-on: windows-latest
     
     steps:
