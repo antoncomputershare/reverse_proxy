@@ -1,0 +1,20 @@
+listen = "127.0.0.1:8080"
+
+[control]
+listen = "127.0.0.1:9000"
+
+[[routes]]
+name = "echo"
+hosts = ["example.com", "*.example.org"]
+path_prefix = "/"
+strip_prefix = true
+rewrite_prefix = "/"
+
+[[routes.upstreams]]
+url = "http://httpbin.org"
+weight = 2
+fail_threshold = 3
+cooldown_secs = 15
+
+[[routes.upstreams]]
+url = "http://httpbin.org:443"
