@@ -37,7 +37,7 @@ pub async fn start_proxy(port: u16, target: String, state: Arc<ProxyState>) -> R
 
 /// Handle a single HTTP request
 async fn handle_request(
-    mut req: Request<Body>,
+    req: Request<Body>,
     target: Arc<String>,
     state: Arc<ProxyState>,
 ) -> Result<Response<Body>, Infallible> {
@@ -56,7 +56,7 @@ async fn handle_request(
     });
 
     // Forward request to target
-    let response = match forward_request(&mut req, &target).await {
+    let response = match forward_request(req, &target).await {
         Ok(resp) => resp,
         Err(e) => {
             error!("Failed to forward request: {}", e);
@@ -104,7 +104,7 @@ async fn handle_request(
 }
 
 /// Forward the request to the target server
-async fn forward_request(req: &mut Request<Body>, target: &str) -> Result<Response<Body>> {
+async fn forward_request(req: Request<Body>, target: &str) -> Result<Response<Body>> {
     // Parse target URL
     let target_uri = if target.starts_with("http://") || target.starts_with("https://") {
         target.parse::<Uri>()?
@@ -130,21 +130,29 @@ async fn forward_request(req: &mut Request<Body>, target: &str) -> Result<Respon
     )
     .parse::<Uri>()?;
 
-    // Update request URI
-    *req.uri_mut() = new_uri;
+    // Deconstruct the original request
+    let (parts, body) = req.into_parts();
+
+    // Create new request with the target URI
+    let mut new_req = Request::builder()
+        .method(parts.method)
+        .uri(new_uri)
+        .version(parts.version);
+
+    // Copy all headers from original request
+    for (key, value) in parts.headers.iter() {
+        new_req = new_req.header(key, value);
+    }
+
+    // Build final request with original body
+    let final_req = new_req.body(body).context("Failed to build forwarded request")?;
 
     // Create HTTP client
     let client = Client::new();
 
-    // Forward request - we need to construct a new request
+    // Forward request with body and headers
     let response = client
-        .request(
-            Request::builder()
-                .method(req.method())
-                .uri(req.uri())
-                .body(Body::empty())
-                .unwrap(),
-        )
+        .request(final_req)
         .await
         .context("Failed to send request to target")?;
 
